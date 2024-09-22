@@ -1,10 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:money_tracker/views/add_expense.dart';
 import 'package:money_tracker/views/main_screen.dart';
 import 'dart:math';
+import 'state_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var widgetList = [MainScreen(), StateScreen()];
+
+  int index = 0;
+
+  Color selectedItem = Colors.blue;
+  Color unselectedItem = Colors.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +33,40 @@ class HomeScreen extends StatelessWidget {
       bottomNavigationBar: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         child: BottomNavigationBar(
+            onTap: (value) {
+              setState(() {
+                index = value;
+              });
+            },
             backgroundColor: Colors.white,
-            // showSelectedLabels: false,
+            showSelectedLabels: false,
             showUnselectedLabels: false,
             elevation: 3,
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.home), label: 'Home'),
+                  icon: Icon(
+                    CupertinoIcons.home,
+                    color: index == 0 ? selectedItem : unselectedItem,
+                  ),
+                  label: 'Home'),
               BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.graph_square_fill), label: 'Info'),
+                icon: Icon(
+                  CupertinoIcons.graph_square_fill,
+                  color: index == 1 ? selectedItem : unselectedItem,
+                ),
+                label: 'Info',
+              ),
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const AddExpense(),
+                ));
+          },
           shape: const CircleBorder(),
           child: Container(
             width: 60,
@@ -49,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                 shape: BoxShape.circle),
             child: const Icon(CupertinoIcons.add),
           )),
-      body: const MainScreen(),
+      body: index == 0 ? MainScreen() : StateScreen(),
     );
   }
 }
